@@ -6,7 +6,7 @@ app = Flask(__name__)
 CORS(app)
 
 # 1. PASTE YOUR API KEY HERE
-GEMINI_API_KEY = "paste you api key to use" 
+GEMINI_API_KEY = "paste your api key to use" 
 
 # 2. Use the exact model name found in your terminal list
 TARGET_MODEL = "gemini-2.5-flash-lite"
