@@ -1,104 +1,116 @@
 # Hotel-Buddy-
-I 
+
 # **Intelligent Hotel Booking Chatbot**
 
 An intelligent, conversational hotel-booking assistant that helps users find suitable hotels through natural language. The chatbot understands user preferences such as location, budget, and amenities, and provides personalized hotel recommendations instantly.
 
 ---
 
-## **🚀 Features**
+## **Features**
 
-* 🧠 *Natural Language Understanding* using Gemini API
-* 🔍 Personalized hotel recommendations based on user preferences
-* 💬 Simple conversational interface
-* ⚡ Instant filtering by location, price, and amenities
-* 🌐 Clean and responsive web UI (HTML/CSS)
-* 🖥 Backend powered by Flask (Python)
+* Natural Language Understanding using Gemini API
+* Personalized hotel recommendations based on user preferences
+* Simple conversational interface
+* Instant filtering by location, price, and amenities
+* Clean and responsive web UI built with React
+* Backend powered by Node.js (Express)
 
 ---
 
-## **🛠 Tech Stack**
+## **Tech Stack**
 
-* **Backend:** Python, Flask
+* **Frontend:** React, Vite
+* **Backend:** Node.js, Express
 * **AI Model:** Gemini API
-* **Frontend:** HTML, CSS
-* **Other:** REST API integration, JSON handling
 
 ---
 
-## **📌 Project Overview**
+## **Project Overview**
 
 This project aims to simplify the hotel booking process by replacing traditional search filters with a natural, chat-based experience. Users simply type their travel requirements, and the system returns smart, context-aware hotel suggestions.
 
 The chatbot processes:
 
-* Location input (e.g., “Hotels in Delhi”)
-* Budget preferences (e.g., “Under ₹3000”)
-* Amenities (e.g., “with Wi-Fi and breakfast”)
-* Combination queries (e.g., “Cheap hotels in Goa with a pool”)
+* Location input (e.g., "Hotels in Delhi")
+* Budget preferences (e.g., "Under ₹3000")
+* Amenities (e.g., "with Wi-Fi and breakfast")
+* Combination queries (e.g., "Cheap hotels in Goa with a pool")
 
 ---
 
-## **⚙️ How It Works**
+## **How It Works**
 
-1. User sends a message through the chat interface
-2. Flask backend receives the query
+1. User sends a message through the React chat interface
+2. Express backend receives the query
 3. Backend sends the query to the **Gemini API** for interpretation
 4. Gemini returns structured intent and recommendation logic
-5. Flask processes the response and sends hotel suggestions back to the UI
+5. Express processes the response and sends hotel suggestions back to the UI
 6. User receives a conversational reply with matching hotels
 
 ---
 
-## **📂 Project Structure**
+## **Project Structure**
 
 ```
-project/
-│── app.py                # Flask backend
-│── templates/
-│     └── index.html      # Frontend UI
-│── static/
-│     └── styles.css      # Styling
-│── requirements.txt      # Dependencies
-│── README.md             # Project documentation
+Hotel-Buddy-/
+├── frontend/                 # React app (Vite)
+│   ├── index.html
+│   ├── package.json
+│   ├── vite.config.js
+│   └── src/
+│       ├── main.jsx
+│       ├── App.jsx
+│       ├── App.css
+│       └── components/
+│           ├── ChatMessage.jsx
+│           └── FilterDropdown.jsx
+├── backend/
+│   ├── server.js             # Express backend
+│   ├── package.json          # Backend dependencies
+│   └── .env                  # Environment variables
+└── README.md
 ```
 
 ---
 
+## **Getting Started**
 
-
-
-### **2. Install dependencies**
+### 1. Install dependencies
 
 ```bash
-pip install -r requirements.txt
+cd backend && npm install
+cd ../frontend && npm install
 ```
 
-### **3. Add your Gemini API key**
+### 2. Add your Gemini API key
 
-Create a `.env` file:
+Edit `backend/.env`:
 
 ```
+PORT=5000
 GEMINI_API_KEY=your_api_key_here
+GEMINI_MODEL=gemini-2.0-flash
 ```
 
-### **4. Run the app**
+### 3. Run the app
 
 ```bash
-python app.py
+# Terminal 1 - Start the backend
+cd backend
+node server.js
+
+# Terminal 2 - Start the frontend
+cd frontend
+npm run dev
 ```
 
-### **5. Open in browser**
+### 4. Open in browser
 
-```
-http://127.0.0.1:5000
-```
+Go to `http://localhost:5173`
 
 ---
 
-
-
-## **📘 Future Enhancements**
+## **Future Enhancements**
 
 * User login & profile personalization
 * Hotel booking integration (API)
@@ -107,4 +119,3 @@ http://127.0.0.1:5000
 * Review & rating system
 
 ---
-
