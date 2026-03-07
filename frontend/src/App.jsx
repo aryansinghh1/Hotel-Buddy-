@@ -45,10 +45,17 @@ function App() {
     setIsLoading(true);
 
     try {
+      const history = messages
+        .filter((msg) => msg.text)
+        .map((msg) => ({
+          role: msg.sender === "user" ? "user" : "model",
+          text: msg.text,
+        }));
+
       const res = await fetch("/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message, filter: filterStr }),
+        body: JSON.stringify({ message, filter: filterStr, history }),
       });
       const data = await res.json();
       setMessages((prev) => [...prev, { text: data.response, sender: "bot" }]);

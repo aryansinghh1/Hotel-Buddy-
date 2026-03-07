@@ -20,23 +20,42 @@ const SYSTEM_PROMPT = `You are Hotel Buddy, an AI hotel booking assistant. You O
 - Check-in/check-out, room types, and accommodation details
 - Travel tips directly related to hotel stays
 
-If the user asks about ANYTHING outside of hotels, accommodations, or closely related travel/stay topics, respond with:
+IMPORTANT RULES FOR RESPONDING:
+1. When a user asks for hotel recommendations, ALWAYS provide a list of specific hotel names with details (price range, rating, key amenities) right away. Do NOT keep asking clarifying questions without giving results first.
+2. If the user has given enough info (city, budget, or hotel type), respond with hotel recommendations immediately. You can ask optional follow-up questions AFTER providing the list, not before.
+3. Short follow-up messages from the user (like "yes", "ok", "give me", "show me", dates, city names, etc.) are part of the ongoing hotel conversation — treat them as valid hotel-related replies and respond helpfully. NEVER reject them.
+4. If some details are missing (like exact dates), provide recommendations anyway and mention that prices may vary by date.
+
+If the user asks about something COMPLETELY unrelated to hotels, accommodations, or travel/stay topics (like coding, math, science, politics, general knowledge), respond with:
 "I'm Hotel Buddy, your hotel booking assistant! I can only help with hotel-related queries — like finding hotels, comparing prices, checking amenities, or recommending destinations. Please ask me something about hotels!"
 
 Do NOT answer questions about coding, math, science, politics, general knowledge, or any unrelated topic. Stay strictly within the hotel domain.`;
 
-async function generateResponse(userInput, userFilters) {
+async function generateResponse(userInput, userFilters, history) {
     const userMessage = userFilters
         ? `User Request: ${userInput}\nPreferences: ${userFilters}`
         : userInput;
 
-    const payload = {
-        contents: [
-            { role: "user", parts: [{ text: SYSTEM_PROMPT }] },
-            { role: "model", parts: [{ text: "Understood. I will only respond to hotel and accommodation-related queries." }] },
-            { role: "user", parts: [{ text: userMessage }] }
-        ]
-    };
+    // Build conversation history for Gemini
+    const contents = [
+        { role: "user", parts: [{ text: SYSTEM_PROMPT }] },
+        { role: "model", parts: [{ text: "Understood. I will only respond to hotel and accommodation-related queries." }] },
+    ];
+
+    // Append past conversation turns (skip the initial welcome message)
+    if (Array.isArray(history) && history.length > 0) {
+        for (const turn of history.slice(1)) {
+            contents.push({
+                role: turn.role === "user" ? "user" : "model",
+                parts: [{ text: turn.text }]
+            });
+        }
+    }
+
+    // Append the current user message
+    contents.push({ role: "user", parts: [{ text: userMessage }] });
+
+    const payload = { contents };
 
     try {
         const response = await axios.post(GEMINI_URL, payload, {
@@ -63,8 +82,8 @@ async function generateResponse(userInput, userFilters) {
 
 app.post('/chat', async (req, res) => {
     try {
-        const { message = '', filter = '' } = req.body;
-        const reply = await generateResponse(message, filter);
+        const { message = '', filter = '', history = [] } = req.body;
+        const reply = await generateResponse(message, filter, history);
         res.json({ response: reply });
     } catch (err) {
         console.log("Server crash:", err.message);
