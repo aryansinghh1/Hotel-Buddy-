@@ -44,11 +44,17 @@ function App() {
     setInput("");
     setIsLoading(true);
 
+    // Build conversation history (skip the initial welcome message at index 0)
+    const history = messages.slice(1).map((msg) => ({
+      role: msg.sender,
+      text: msg.text,
+    }));
+
     try {
       const res = await fetch("/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message, filter: filterStr }),
+        body: JSON.stringify({ message, filter: filterStr, history }),
       });
       const data = await res.json();
       setMessages((prev) => [...prev, { text: data.response, sender: "bot" }]);

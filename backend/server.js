@@ -25,18 +25,28 @@ If the user asks about ANYTHING outside of hotels, accommodations, or closely re
 
 Do NOT answer questions about coding, math, science, politics, general knowledge, or any unrelated topic. Stay strictly within the hotel domain.`;
 
-async function generateResponse(userInput, userFilters) {
+async function generateResponse(userInput, userFilters, conversationHistory = []) {
     const userMessage = userFilters
         ? `User Request: ${userInput}\nPreferences: ${userFilters}`
         : userInput;
 
-    const payload = {
-        contents: [
-            { role: "user", parts: [{ text: SYSTEM_PROMPT }] },
-            { role: "model", parts: [{ text: "Understood. I will only respond to hotel and accommodation-related queries." }] },
-            { role: "user", parts: [{ text: userMessage }] }
-        ]
-    };
+    const contents = [
+        { role: "user", parts: [{ text: SYSTEM_PROMPT }] },
+        { role: "model", parts: [{ text: "Understood. I will only respond to hotel and accommodation-related queries." }] },
+    ];
+
+    for (const msg of conversationHistory) {
+        const geminiRole = msg.role === "bot" ? "model" : msg.role === "user" ? "user" : null;
+        if (!geminiRole || typeof msg.text !== "string") continue;
+        contents.push({
+            role: geminiRole,
+            parts: [{ text: msg.text }],
+        });
+    }
+
+    contents.push({ role: "user", parts: [{ text: userMessage }] });
+
+    const payload = { contents };
 
     try {
         const response = await axios.post(GEMINI_URL, payload, {
@@ -63,8 +73,8 @@ async function generateResponse(userInput, userFilters) {
 
 app.post('/chat', async (req, res) => {
     try {
-        const { message = '', filter = '' } = req.body;
-        const reply = await generateResponse(message, filter);
+        const { message = '', filter = '', history = [] } = req.body;
+        const reply = await generateResponse(message, filter, history);
         res.json({ response: reply });
     } catch (err) {
         console.log("Server crash:", err.message);
